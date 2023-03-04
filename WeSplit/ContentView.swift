@@ -14,13 +14,23 @@ struct ContentView: View {
     @FocusState private var amountIsFocused: Bool
     
     let tipPercentages = [10, 15, 20, 25, 0]
-    var totalPerPerson: Double {
-        let peopleCount = Double(numberOfPeople + 2) // counting from 2
-        let tipSelection = Double(tipPercentage)
-        let grandTotal = checkAmount * (1 + tipSelection/100)
-        
-        return grandTotal / peopleCount
+    
+    var peopleCount: Double {
+        Double(numberOfPeople + 2) // counting from 2
     }
+    var tipSelection: Double {
+        Double(tipPercentage)
+    }
+    var grandTotal: Double {
+        checkAmount * (1 + tipSelection/100)
+    }
+    var totalPerPerson: Double {
+        grandTotal / peopleCount
+    }
+    
+//    init() {
+//        UINavigationBar.appearance().titleTextAttributes = [.font : UIFont.preferredFont(forTextStyle: .title2), .foregroundColor : UIColor(named: "TextColor_General")!]
+//    }
     
     var body: some View {
         NavigationView {
@@ -37,19 +47,33 @@ struct ContentView: View {
                 }
                 Section {
                     Picker("Tip (%)", selection: $tipPercentage) {
-                        ForEach(tipPercentages, id: \.self) {
+                        ForEach(0..<101, id: \.self) {
                             Text($0, format: .percent)
                         }
                     }
-                    .pickerStyle(.segmented)
+                    .pickerStyle(.navigationLink)
                 } header: {
-                    Text("Tip (%)")
+                    Text("Tips:")
+                }
+                Section {
+                    Text(grandTotal, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                } header: {
+                    Text("Grand total:")
                 }
                 Section {
                     Text(totalPerPerson, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                        .font(.title2)
+                } header: {
+                    Text("Amount per person:")
+                        .fontWeight(.black)
                 }
             }
-            .navigationTitle("WeSplit")
+//            .scrollContentBackground(.hidden)
+//            .background(Color("BackgroungColor"))
+            .navigationTitle(
+                Text("QuickSplit")
+            )
+//            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
@@ -59,6 +83,9 @@ struct ContentView: View {
                 }
             }
         }
+        .kerning(0.5)
+        .foregroundColor(Color("TextColor_General"))
+        .bold()
     }
 }
 
